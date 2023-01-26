@@ -29,17 +29,19 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return user
 
 
-class UserListSerializer(serializers.ModelSerializer):
+class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            'id',
             'username',
             'image',
             'bio',
+            'phone_number',
         )
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserListSerializer(serializers.ModelSerializer):
     user_posts = PostSerializer(read_only=True, many=True)
     user_favorite = FavoriteSerializers(read_only=True, many=True)
 

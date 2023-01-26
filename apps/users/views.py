@@ -6,9 +6,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import get_user_model
 
-from apps.users.serializer import UserCreateSerializer, UserSerializer, UserListSerializer
-from utils.permissions import IsUserOwner
-
+from apps.users.serializer import UserCreateSerializer, UserListSerializer, UserUpdateSerializer
+from utils.permissions import IsUserOwner, IsOwner
 
 User = get_user_model()
 
@@ -17,19 +16,12 @@ class UserApiViewSet(GenericViewSet,
                      mixins.CreateModelMixin,
                      mixins.ListModelMixin,
                      mixins.RetrieveModelMixin,
-                     mixins.DestroyModelMixin,
-                     mixins.UpdateModelMixin,):
+                     mixins.DestroyModelMixin,):
     queryset = User.objects.all()
-    serializer_class = UserCreateSerializer
+    serializer_class = UserListSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        if self.action == 'create':
-            return UserCreateSerializer
-        elif self.action == 'retrieve':
-            return UserSerializer
-        return UserListSerializer
-
-    def get_permissions(self):
-        if self.action in ['create']:
-            return [IsAuthenticated()]
-        return [IsUserOwner()]
+        if self.action in ['list']:
+            return UserListSerializer
+        return UserCreateSerializer
